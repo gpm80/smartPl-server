@@ -13,6 +13,7 @@ public class Manufacturer implements Serializable {
     private String description;
     private String lng;
     private String lat;
+    private String srcImage;
 
     public Manufacturer() {
     }
@@ -55,5 +56,13 @@ public class Manufacturer implements Serializable {
 
     public void setLat(String lat) {
         this.lat = lat;
+    }
+
+    public String getSrcImage() {
+        return srcImage;
+    }
+
+    public void setSrcImage(String srcImage) {
+        this.srcImage = srcImage;
     }
 }

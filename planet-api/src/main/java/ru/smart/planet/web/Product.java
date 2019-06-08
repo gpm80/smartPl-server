@@ -13,6 +13,7 @@ public class Product {
     private BioStatus bioStatus;
     private Category category;
     private String group;
+    private String srcImage;
 
     public Product() {
     }
@@ -79,5 +80,13 @@ public class Product {
 
     public void setGroup(String group) {
         this.group = group;
+    }
+
+    public String getSrcImage() {
+        return srcImage;
+    }
+
+    public void setSrcImage(String srcImage) {
+        this.srcImage = srcImage;
     }
 }

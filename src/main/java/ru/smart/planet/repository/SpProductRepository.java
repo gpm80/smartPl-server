@@ -7,7 +7,6 @@ import org.ektorp.support.CouchDbRepositorySupport;
 import org.ektorp.support.View;
 import org.ektorp.support.Views;
 import org.springframework.stereotype.Repository;
-import ru.smart.planet.domain.SpManufacturer;
 import ru.smart.planet.domain.SpProduct;
 import ru.smart.planet.web.Category;
 
@@ -48,8 +47,8 @@ public class SpProductRepository extends CouchDbRepositorySupport<SpProduct> {
         db.createAttachment(docId, revId, attachmentInputStream);
     }
 
-    public SpManufacturer findOne(String id) {
-        return db.find(SpManufacturer.class, id);
+    public SpProduct findOne(String id) {
+        return db.find(SpProduct.class, id);
     }
 
     @Override
