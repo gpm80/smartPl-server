@@ -8,7 +8,7 @@ import org.ektorp.support.CouchDbDocument;
  */
 public class SpManufacturer extends CouchDbDocument {
 
-    private final String type = "MANUF";
+    private final String type = "MANUFACTURE";
     private String title;
     private String description;
     private String lng;

@@ -17,15 +17,18 @@ import java.util.List;
  */
 @Repository
 @Views({
-        @View(name = SpProductRepository.VIEW_ALL, map = "function(doc) { if (doc.type='PRODUCT') { emit(doc._id, doc) } }"),
-        @View(name = SpProductRepository.VIEW_BY_CATEGORY, map = "function(doc) { if (doc.type='PRODUCT') { emit(doc.category, doc) } }"),
-        @View(name = SpProductRepository.VIEW_BY_GROUP, map = "function(doc) { if (doc.type='PRODUCT') { emit(doc.group, doc) } }")
+        @View(name = SpProductRepository.VIEW_ALL,
+                map = "function(doc) { if (doc && doc.type='PRODUCT') { emit(doc._id, doc) } }"),
+        @View(name = SpProductRepository.VIEW_BY_CATEGORY,
+                map = "function(doc) { if (doc && doc.type='PRODUCT') { emit(doc.category, doc) } }"),
+        @View(name = SpProductRepository.VIEW_BY_GROUP,
+                map = "function(doc) { if (doc && doc.type='PRODUCT') { emit(doc.group, doc) } }")
 })
 public class SpProductRepository extends CouchDbRepositorySupport<SpProduct> {
 
     public static final String VIEW_ALL = "allProduct";
-    public static final String VIEW_BY_CATEGORY = "viewByCategory";
-    public static final String VIEW_BY_GROUP = "viewByGroup";
+    public static final String VIEW_BY_CATEGORY = "productByCategory";
+    public static final String VIEW_BY_GROUP = "productByGroup";
 
     protected SpProductRepository(CouchDbConnector db) {
         super(SpProduct.class, db);

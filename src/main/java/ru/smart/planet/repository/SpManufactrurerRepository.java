@@ -16,7 +16,8 @@ import java.util.List;
  */
 @Repository
 @Views({
-        @View(name = SpManufactrurerRepository.VIEW_ALL, map = "function(doc) { if (doc.type='MANUF') { emit(doc._id, doc) } }")
+        @View(name = SpManufactrurerRepository.VIEW_ALL,
+                map = "function(doc) { if (doc && doc.type='MANUFACTURE') { emit(doc._id, doc) } }")
 })
 public class SpManufactrurerRepository extends CouchDbRepositorySupport<SpManufacturer> {
 

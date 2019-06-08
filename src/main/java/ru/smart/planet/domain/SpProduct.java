@@ -10,6 +10,7 @@ import ru.smart.planet.web.Category;
  */
 public class SpProduct extends CouchDbDocument {
 
+    private final String type = "PRODUCT";
     private String manufacturerUid;
     private String title;
     private String description;
@@ -19,6 +20,10 @@ public class SpProduct extends CouchDbDocument {
     private String group;
 
     public SpProduct() {
+    }
+
+    public String getType() {
+        return type;
     }
 
     public String getManufacturerUid() {

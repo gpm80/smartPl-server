@@ -8,9 +8,6 @@
     <artifactId>planet-server</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
-    <modules>
-        <module>planet-api</module>
-    </modules>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -56,7 +53,7 @@
         <dependency>
             <groupId>ru.smart.planet</groupId>
             <artifactId>planet-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 
