@@ -29,13 +29,26 @@ public class Converter {
         p.setCategory(val.getCategory());
         p.setGroup(val.getGroup());
         p.setBioStatus(val.getBioStatus());
+        p.setSrcImage(getUrlImage(val, absoluteUrl));
         //TODO
 //        p.setManufacturer(val.getManufacturerUid());
         return p;
     }
 
-    public static List<Product> convertsProd(List<SpProduct> list, String absoluteUrl){
-        return list.stream().map(p-> convert(p, absoluteUrl)).filter(Objects::nonNull)
+    public static SpProduct convert(Product val) {
+        SpProduct sp = new SpProduct();
+        sp.setTitle(val.getTitle());
+        sp.setDescription(val.getDescription());
+        sp.setFullDescription(val.getFullDescription());
+        sp.setManufacturerUid(val.getManufacturer().getUid());
+        sp.setBioStatus(val.getBioStatus());
+        sp.setCategory(val.getCategory());
+        sp.setGroup(val.getGroup());
+        return sp;
+    }
+
+    public static List<Product> convertsProd(List<SpProduct> list, String absoluteUrl) {
+        return list.stream().map(p -> convert(p, absoluteUrl)).filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 

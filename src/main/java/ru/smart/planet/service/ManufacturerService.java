@@ -3,7 +3,7 @@ package ru.smart.planet.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.smart.planet.repository.SpManufactrurerRepository;
+import ru.smart.planet.repository.SpManufacturerRepository;
 import ru.smart.planet.service.converter.Converter;
 import ru.smart.planet.web.Manufacturer;
 
@@ -16,7 +16,7 @@ import java.util.List;
 public class ManufacturerService {
 
     @Autowired
-    protected SpManufactrurerRepository repository;
+    protected SpManufacturerRepository repository;
     @Value("${absolute.url.couch.attachment}")
     protected String absoluteUrl;
 

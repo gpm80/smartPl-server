@@ -18,11 +18,11 @@ import java.util.List;
 @Repository
 @Views({
         @View(name = SpProductRepository.VIEW_ALL,
-                map = "function(doc) { if (doc && doc.type='PRODUCT') { emit(doc._id, doc) } }"),
+                map = "function(doc) { if (doc.type=='PRODUCT') { emit(doc._id, doc) } }"),
         @View(name = SpProductRepository.VIEW_BY_CATEGORY,
-                map = "function(doc) { if (doc && doc.type='PRODUCT') { emit(doc.category, doc) } }"),
+                map = "function(doc) { if (doc.type=='PRODUCT') { emit(doc.category, doc) } }"),
         @View(name = SpProductRepository.VIEW_BY_GROUP,
-                map = "function(doc) { if (doc && doc.type='PRODUCT') { emit(doc.group, doc) } }")
+                map = "function(doc) { if (doc.type=='PRODUCT') { emit(doc.group, doc) } }")
 })
 public class SpProductRepository extends CouchDbRepositorySupport<SpProduct> {
 
@@ -41,9 +41,9 @@ public class SpProductRepository extends CouchDbRepositorySupport<SpProduct> {
      * @param spProduct
      * @return
      */
-    public String save(SpProduct spProduct) {
+    public SpProduct save(SpProduct spProduct) {
         add(spProduct);
-        return spProduct.getId();
+        return spProduct;
     }
 
     public void attachFile(String docId, String revId, AttachmentInputStream attachmentInputStream) {

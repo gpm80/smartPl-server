@@ -16,14 +16,14 @@ import java.util.List;
  */
 @Repository
 @Views({
-        @View(name = SpManufactrurerRepository.VIEW_ALL,
-                map = "function(doc) { if (doc && doc.type='MANUFACTURE') { emit(doc._id, doc) } }")
+        @View(name = SpManufacturerRepository.VIEW_ALL,
+                map = "function(doc) { if (doc.type=='MANUFACTURE') { emit(doc._id, doc) } }")
 })
-public class SpManufactrurerRepository extends CouchDbRepositorySupport<SpManufacturer> {
+public class SpManufacturerRepository extends CouchDbRepositorySupport<SpManufacturer> {
 
     public static final String VIEW_ALL = "allManufacturer";
 
-    protected SpManufactrurerRepository(CouchDbConnector db) {
+    protected SpManufacturerRepository(CouchDbConnector db) {
         super(SpManufacturer.class, db);
         initStandardDesignDocument();
     }
