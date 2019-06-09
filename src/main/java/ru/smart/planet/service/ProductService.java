@@ -51,6 +51,10 @@ public class ProductService {
         return save(product, null);
     }
 
+    public Boolean deleteAll() {
+        repository.deleteAll();
+        return true;
+    }
 
     public Product getOne(String uid) {
         return Converter.convert(repository.findOne(uid), absoluteUrl);

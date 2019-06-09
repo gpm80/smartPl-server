@@ -36,6 +36,11 @@ public class ProductController {
         return productService.getAll();
     }
 
+    @RequestMapping(path = "/removeAl")
+    public Boolean deleteAll() {
+        return productService.deleteAll();
+    }
+
     @RequestMapping(path = "/cat/{category}")
     public List<Product> getByCategory(@PathVariable String category) {
         return productService.getByCategory(category);

@@ -18,5 +18,4 @@ public enum Category {
      * Животная продукция
      */
     ANIMAL
-
 }

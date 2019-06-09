@@ -26,12 +26,12 @@ import java.util.stream.Stream;
  */
 public class LoadProduct {
 
-    private static final String[] SOURCE = new String[]{
-            "http://localhost:8085", "/home/mihalich/DigiStream/SP-image/smart/"
-    };
-//    private static final String[] SOURCE = new String[]{
-//            "http://93.171.217.252/planet-server", "/home/mihalich/DigiStream/SP-image/smart/"
+//        private static final String[] SOURCE = new String[]{
+//            "http://localhost:8085", "/home/mihalich/DigiStream/SP-image/smart/"
 //    };
+    private static final String[] SOURCE = new String[]{
+            "http://93.171.217.252/planet-server", "/home/mihalich/DigiStream/SP-image/SPprod/"
+    };
 //    private static final String[] SOURCE = new String[]{
 //        "http://93.171.217.252/shopping-server/rest", "/home/gpm/Priv/java/android/ЧеКупил/RecipesProduction/"
 //    };
@@ -43,42 +43,10 @@ public class LoadProduct {
     public static void main(String[] args) throws InterruptedException {
 
         LoadProduct loaded = new LoadProduct();
-//        loaded.generate().forEach(loaded::sendToServer);
-//        loaded.sendToServer();
         loaded.load(SOURCE[1]);
 //      TimeUnit.SECONDS.sleep(1);
     }
 
-//    private List<Product> generate() {
-//        ArrayList<Product> list = new ArrayList<>();
-//
-//        Manufacturer manufacturer = new Manufacturer();
-//        manufacturer.setTitle("Зеленый урожай");
-//        manufacturer.setUid(UUID.randomUUID().toString());
-//
-//        Product p = new Product();
-//        p.setTitle("Огурцы");
-//        p.setManufacturer(manufacturer);
-//        p.setDescription("Вкусные и пупырчатые");
-//        p.setFullDescription("Огурчики с грядки");
-//        p.setGroup("Огурцы");
-//        p.setCategory(Category.VEGETABLE);
-//        p.setBioStatus(BioStatus.GREEN);
-//        p.setSrcImage("/home/mihalich/DigiStream/SP-image/огурцы.jpg");
-//        list.add(p);
-//
-//        p = new Product();
-//        p.setTitle("Помидоры");
-//        p.setManufacturer(manufacturer);
-//        p.setDescription("Розовые");
-//        p.setFullDescription("С навозиком");
-//        p.setGroup("Помидоры");
-//        p.setCategory(Category.VEGETABLE);
-//        p.setBioStatus(BioStatus.YELLOW);
-//        p.setSrcImage("/home/mihalich/DigiStream/SP-image/помидоры.jpg");
-//        list.add(p);
-//        return list;
-//    }
 
     /**
      * Загрузчик всех папок в корне
@@ -108,7 +76,9 @@ public class LoadProduct {
     private boolean recipeProcess(File dir, Manufacturer manufacturer) {
         File[] files = dir.listFiles();
         assert files != null;
-        List<File> images = Stream.of(files).filter(file -> file.getName().toLowerCase().endsWith("jpg"))
+        List<File> images = Stream.of(files).filter(file ->
+                file.getName().toLowerCase().endsWith("jpg")
+                        || file.getName().toLowerCase().endsWith("png"))
                 .collect(Collectors.toList());
         File productFile = new File(dir, "info.txt");
         if (!productFile.exists()) {

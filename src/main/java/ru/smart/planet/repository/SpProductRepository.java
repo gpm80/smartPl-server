@@ -1,6 +1,7 @@
 package ru.smart.planet.repository;
 
 import org.ektorp.AttachmentInputStream;
+import org.ektorp.BulkDeleteDocument;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.ViewQuery;
 import org.ektorp.support.CouchDbRepositorySupport;
@@ -9,8 +10,11 @@ import org.ektorp.support.Views;
 import org.springframework.stereotype.Repository;
 import ru.smart.planet.domain.SpProduct;
 import ru.smart.planet.web.Category;
+import ru.smart.planet.web.Product;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created on 08.06.19.
@@ -70,5 +74,19 @@ public class SpProductRepository extends CouchDbRepositorySupport<SpProduct> {
         ViewQuery viewByGroup = createQuery(VIEW_BY_GROUP)
                 .key(group);
         return db.queryView(viewByGroup, SpProduct.class);
+    }
+
+    public int deleteAll() {
+        List<SpProduct> list;
+        long startTime = System.currentTimeMillis();
+        int deleted = 0;
+        while (!(list = getAll()).isEmpty()) {
+            Set<BulkDeleteDocument> collect = list.stream().map(BulkDeleteDocument::of).collect(Collectors.toSet());
+            int error = db.executeBulk(collect).size();
+            int successDel = collect.size() - error;
+            deleted += successDel;
+            System.out.print(".");
+        }
+        return deleted;
     }
 }
