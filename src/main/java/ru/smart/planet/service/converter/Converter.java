@@ -31,6 +31,7 @@ public class Converter {
         p.setBioStatus(val.getBioStatus());
         p.setSrcImage(getUrlImage(val, absoluteUrl));
         //TODO
+
 //        p.setManufacturer(val.getManufacturerUid());
         return p;
     }

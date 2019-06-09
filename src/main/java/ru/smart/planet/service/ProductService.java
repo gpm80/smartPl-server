@@ -35,7 +35,7 @@ public class ProductService {
         SpProduct save = repository.save(Converter.convert(product));
         if (multipartFile != null) {
             try (InputStream inputStream = multipartFile.getInputStream()) {
-                File tempFile = File.createTempFile("file-", ".recipe", new File(System.getProperty("java.io.tmpdir")));
+                File tempFile = File.createTempFile("file-", ".product", new File(System.getProperty("java.io.tmpdir")));
                 FileUtils.copyInputStreamToFile(inputStream, tempFile);
                 AttachmentInputStream attach = new AttachmentInputStream(UUID.randomUUID().toString(), new FileInputStream(tempFile), MimeTypeUtils.IMAGE_JPEG_VALUE);
                 repository.attachFile(save.getId(), save.getRevision(), attach);

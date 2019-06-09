@@ -1,5 +1,6 @@
 package ru.smart.planet.loader;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,10 +15,11 @@ import ru.smart.planet.web.Manufacturer;
 import ru.smart.planet.web.Product;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by Petr Gusarov on 29.03.19.
@@ -25,8 +27,11 @@ import java.util.UUID;
 public class LoadProduct {
 
     private static final String[] SOURCE = new String[]{
-            "http://localhost:8085", "/home/gpm/Priv/java/android/ЧеКупил/RecipesDebug/"
+            "http://localhost:8085", "/home/mihalich/DigiStream/SP-image/smart/"
     };
+//    private static final String[] SOURCE = new String[]{
+//            "http://93.171.217.252/planet-server", "/home/mihalich/DigiStream/SP-image/smart/"
+//    };
 //    private static final String[] SOURCE = new String[]{
 //        "http://93.171.217.252/shopping-server/rest", "/home/gpm/Priv/java/android/ЧеКупил/RecipesProduction/"
 //    };
@@ -38,88 +43,101 @@ public class LoadProduct {
     public static void main(String[] args) throws InterruptedException {
 
         LoadProduct loaded = new LoadProduct();
-        loaded.generate().forEach(loaded::sendToServer);
+//        loaded.generate().forEach(loaded::sendToServer);
 //        loaded.sendToServer();
-//        loadRecipes.load(SOURCE[1]);
+        loaded.load(SOURCE[1]);
 //      TimeUnit.SECONDS.sleep(1);
     }
 
-    private List<Product> generate() {
-        ArrayList<Product> list = new ArrayList<>();
+//    private List<Product> generate() {
+//        ArrayList<Product> list = new ArrayList<>();
+//
+//        Manufacturer manufacturer = new Manufacturer();
+//        manufacturer.setTitle("Зеленый урожай");
+//        manufacturer.setUid(UUID.randomUUID().toString());
+//
+//        Product p = new Product();
+//        p.setTitle("Огурцы");
+//        p.setManufacturer(manufacturer);
+//        p.setDescription("Вкусные и пупырчатые");
+//        p.setFullDescription("Огурчики с грядки");
+//        p.setGroup("Огурцы");
+//        p.setCategory(Category.VEGETABLE);
+//        p.setBioStatus(BioStatus.GREEN);
+//        p.setSrcImage("/home/mihalich/DigiStream/SP-image/огурцы.jpg");
+//        list.add(p);
+//
+//        p = new Product();
+//        p.setTitle("Помидоры");
+//        p.setManufacturer(manufacturer);
+//        p.setDescription("Розовые");
+//        p.setFullDescription("С навозиком");
+//        p.setGroup("Помидоры");
+//        p.setCategory(Category.VEGETABLE);
+//        p.setBioStatus(BioStatus.YELLOW);
+//        p.setSrcImage("/home/mihalich/DigiStream/SP-image/помидоры.jpg");
+//        list.add(p);
+//        return list;
+//    }
 
+    /**
+     * Загрузчик всех папок в корне
+     *
+     * @param parentDir
+     */
+    private void load(String parentDir) {
         Manufacturer manufacturer = new Manufacturer();
         manufacturer.setTitle("Зеленый урожай");
+        manufacturer.setLat("-27.47093");
+        manufacturer.setLng("153.0235");
         manufacturer.setUid(UUID.randomUUID().toString());
-
-        Product p = new Product();
-        p.setTitle("Огурцы");
-        p.setManufacturer(manufacturer);
-        p.setDescription("Вкусные и пупырчатые");
-        p.setFullDescription("Огурчики с грядки");
-        p.setGroup("Огурцы");
-        p.setCategory(Category.VEGETABLE);
-        p.setBioStatus(BioStatus.GREEN);
-        p.setSrcImage("/home/mihalich/DigiStream/SP-image/огурцы.jpg");
-        list.add(p);
-
-        p = new Product();
-        p.setTitle("Помидоры");
-        p.setManufacturer(manufacturer);
-        p.setDescription("Розовые");
-        p.setFullDescription("С навозиком");
-        p.setGroup("Помидоры");
-        p.setCategory(Category.VEGETABLE);
-        p.setBioStatus(BioStatus.YELLOW);
-        p.setSrcImage("/home/mihalich/DigiStream/SP-image/помидоры.jpg");
-        list.add(p);
-        return list;
+        File dir = new File(parentDir);
+        File[] files = dir.listFiles((dir1, name) -> !name.startsWith("_"));
+        assert files != null;
+        Stream.of(files).filter(File::isDirectory)
+                .forEach(v -> recipeProcess(v, manufacturer));
     }
 
-
-    private void loadProduct(Product product) {
-
+    /**
+     * '
+     * Обработка
+     *
+     * @param dir
+     * @return
+     */
+    private boolean recipeProcess(File dir, Manufacturer manufacturer) {
+        File[] files = dir.listFiles();
+        assert files != null;
+        List<File> images = Stream.of(files).filter(file -> file.getName().toLowerCase().endsWith("jpg"))
+                .collect(Collectors.toList());
+        File productFile = new File(dir, "info.txt");
+        if (!productFile.exists()) {
+            throw new RuntimeException(productFile.getAbsolutePath() + " not found");
+        }
+        try {
+            String[] blocks = FileUtils
+                    .readFileToString(productFile, "utf-8")
+                    .split("---");
+            if (blocks.length < 6) {
+                throw new IllegalArgumentException((productFile.getAbsolutePath() + " unsupported format"));
+            }
+            Product product = new Product();
+            product.setManufacturer(manufacturer);
+            product.setTitle(blocks[0].replaceAll("\\n", " ").trim());
+            product.setGroup(blocks[1].replaceAll("\\n", " ").trim());
+            product.setCategory(Category.valueOf(blocks[2].replaceAll("\\n", " ").trim()));
+            product.setBioStatus(BioStatus.valueOf(blocks[3].replaceAll("\\n", " ").trim()));
+            product.setDescription(blocks[4].replaceAll("\\n", " ").trim());
+            product.setFullDescription(blocks[5].replaceAll("\\n", " ").trim());
+            if (!images.isEmpty()) {
+                product.setSrcImage(images.get(0).getAbsolutePath());
+            }
+            sendToServer(product);
+            return dir.renameTo(new File(dir.getParent(), "_" + dir.getName()));
+        } catch (Exception e) {
+            throw new RuntimeException(dir.toString(), e);
+        }
     }
-
-//    private void load(String parentDir) {
-//        File dir = new File(parentDir);
-//        File[] files = dir.listFiles(new FilenameFilter() {
-//            @Override
-//            public boolean accept(File dir, String name) {
-//                return !name.startsWith("_");
-//            }
-//        });
-//        assert files != null;
-//        Stream.of(files).filter(File::isDirectory)
-//            .forEach(this::recipeProcess);
-//    }
-
-//    private boolean recipeProcess(File dir) {
-//        File[] files = dir.listFiles();
-//        assert files != null;
-//        List<File> images = Stream.of(files).filter(file -> file.getName().toLowerCase().endsWith("jpg"))
-//            .collect(Collectors.toList());
-//        File recipeFile = new File(dir, "recipe.txt");
-//        if (!recipeFile.exists()) {
-//            throw new RuntimeException(recipeFile.getAbsolutePath() + " not found");
-//        }
-//        try {
-//            String[] blocks = FileUtils.readFileToString(recipeFile, "utf-8").split("---");
-//            if (blocks.length < 4) {
-//                throw new IllegalArgumentException((recipeFile.getAbsolutePath() + " unsupported format"));
-//            }
-//            ExRecipe exRecipe = new ExRecipe();
-//            exRecipe.setTitle(blocks[0].replaceAll("\\n", " ").trim());
-//            exRecipe.setGroup(blocks[1].replaceAll("\\n", " ").trim());
-//            exRecipe.setExBuyList(
-//                parseBuys(blocks[2])
-//            );
-//            exRecipe.setDescription(blocks[3].trim());
-//            sendToServer(exRecipe, images);
-//            return dir.renameTo(new File(dir.getParent(), "_" + dir.getName()));
-//        } catch (Exception e) {
-//            throw new RuntimeException(dir.toString(), e);
-//        }
-//    }
 
 
     private void sendToServer(Product product) {
